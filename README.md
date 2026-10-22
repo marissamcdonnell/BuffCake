@@ -1,75 +1,31 @@
-# React + TypeScript + Vite
+# BuffCake 🎂💪
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Feed the cake. Watch it get buff.
 
-Currently, two official plugins are available:
+A revival of SquishFruits (my first dev project: mash fruits, get a random taste like "shoe"). This time you pick foods, feed a cake, and it bulks up from **Soft Sponge** to **Beef Cake**. The cake talks back using Claude.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Run it
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```sh
+pnpm install
+pnpm dev     # game at http://localhost:5173 (offline reactions)
+pnpm test    # game logic tests, Node's built-in runner
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+To hear real Claude reactions locally, run `vercel dev` with `ANTHROPIC_API_KEY` set in `.env.local`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## How it's built
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Piece | Where | What it does |
+| --- | --- | --- |
+| Game rules | `src/game/` | Pure functions: `feed(cake, meal)` → new cake. No React, fully tested. |
+| UI | `src/components/`, `src/App.tsx` | React 19 + Tailwind v4. SVG cake whose biceps grow with buff. |
+| Reactions API | `api/react.ts` | Vercel function. Validates input, calls Claude, keeps the key server-side. |
+| Fallback | `src/game/reactions.ts` | Canned lines when the API is missing or slow, so the game never breaks. |
 
-```
+## Roadmap
+
+- [x] Playable game loop with Claude reactions
+- [ ] MCP server so agents can feed the cake
+- [ ] Agent-friendly JSON API + docs for machines
+- [ ] Evals: does the cake stay funny, short, and in character?
