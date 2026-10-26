@@ -26,6 +26,6 @@ To hear real Claude reactions locally, run `vercel dev` with `ANTHROPIC_API_KEY`
 ## Roadmap
 
 - [x] Playable game loop with Claude reactions
+- [ ] Evals in Python (`evals/`): does the cake stay short (≤15 words), in character, family-friendly, and emoji-free? Run against the same system prompt as `api/react.ts`
 - [ ] MCP server so agents can feed the cake
 - [ ] Agent-friendly JSON API + docs for machines
-- [ ] Evals: does the cake stay funny, short, and in character?
