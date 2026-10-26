@@ -2,9 +2,10 @@
 // Asks Claude for a one-line reaction from the cake. The API key stays on the server.
 // Set ANTHROPIC_API_KEY in Vercel → Project → Settings → Environment Variables.
 // No key? Returns 503 and the browser uses a canned line instead.
+// The prompt lives in shared/cake-prompt.json so evals/ tests the exact same one.
+import prompt from '../shared/cake-prompt.json' with { type: 'json' }
 
-const MODEL = 'claude-haiku-5-5'
-const ALLOWED_LEVELS = ['Soft Sponge', 'Toned Torte', 'Swole Sponge', 'Mighty Muffin', 'Beef Cake']
+const ALLOWED_LEVELS: readonly string[] = prompt.levels
 
 type Body = { foods: string[]; gained: number; level: string }
 
@@ -17,6 +18,13 @@ function parse(input: unknown): Body | null {
   if (typeof gained !== 'number' || !Number.isFinite(gained) || Math.abs(gained) > 100) return null
   if (typeof level !== 'string' || !ALLOWED_LEVELS.includes(level)) return null
   return { foods: foods as string[], gained: Math.round(gained), level }
+}
+
+function userMessage({ foods, gained, level }: Body): string {
+  return prompt.userTemplate
+    .replace('{foods}', foods.join(', '))
+    .replace('{gained}', String(gained))
+    .replace('{level}', level)
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -34,18 +42,10 @@ export async function POST(request: Request): Promise<Response> {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 60,
-      system:
-        'You are BuffCake, a cake who is getting jacked by eating food. ' +
-        'Reply with ONE short, funny, family-friendly line (max 15 words) in first person. ' +
-        'No quotes, no emojis, no hashtags.',
-      messages: [
-        {
-          role: 'user',
-          content: `I just ate: ${body.foods.join(', ')}. Buff change: ${body.gained}. My level is now ${body.level}.`,
-        },
-      ],
+      model: prompt.model,
+      max_tokens: prompt.maxTokens,
+      system: prompt.system,
+      messages: [{ role: 'user', content: userMessage(body) }],
     }),
   })
 

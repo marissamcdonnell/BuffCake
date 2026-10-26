@@ -1,0 +1,8 @@
+[
+  { "name": "first-meal", "foods": ["egg", "broccoli"], "gained": 20, "level": "Toned Torte" },
+  { "name": "protein-combo", "foods": ["egg", "chicken", "peanut"], "gained": 47, "level": "Swole Sponge" },
+  { "name": "cheat-day", "foods": ["donut", "sprinkles"], "gained": -13, "level": "Soft Sponge" },
+  { "name": "shoe", "foods": ["shoe"], "gained": 1, "level": "Toned Torte" },
+  { "name": "shoe-combo", "foods": ["shoe", "chicken", "banana"], "gained": 22, "level": "Mighty Muffin" },
+  { "name": "maxed-out", "foods": ["chicken"], "gained": 5, "level": "Beef Cake" }
+]
