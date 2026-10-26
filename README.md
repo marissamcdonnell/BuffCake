@@ -21,7 +21,7 @@ Checks that the cake stays short, in character and family-friendly, using the ex
 ```sh
 export ANTHROPIC_API_KEY=sk-ant-...
 pnpm evals                # rule checks + a Claude judge, 3 lines per case
-pnpm evals -- --no-judge  # rule checks only
+pnpm evals --no-judge     # rule checks only
 pnpm test:evals           # unit tests for the rule checks, no API calls
 ```
 
