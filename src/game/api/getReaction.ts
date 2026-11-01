@@ -1,21 +1,19 @@
-import type { LevelName } from './game/cake.ts'
-import type { Food } from './game/foods.ts'
-import { cannedReaction } from './game/reactions.ts'
+import { REACTION_TIMEOUT_MS } from '../game.consts.ts'
+import type { Food, LevelName, Reaction } from '../game.types.ts'
+import { cannedReaction } from '../utils/cannedReaction.ts'
 
-export type Reaction = { line: string; source: 'claude' | 'canned' }
-
-/** Ask the cake how it feels. Falls back to a canned line if the API is missing or slow. */
-export async function getReaction(
+// Falls back to a canned line if the API is missing, slow, or returns something unexpected.
+export const getReaction = async (
   meal: readonly Food[],
   gained: number,
   level: LevelName,
-): Promise<Reaction> {
+): Promise<Reaction> => {
   try {
     const res = await fetch('/api/react', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ foods: meal.map((f) => f.id), gained, level }),
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(REACTION_TIMEOUT_MS),
     })
     if (!res.ok) throw new Error(`status ${res.status}`)
     const data: unknown = await res.json()

@@ -1,8 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { feed, INITIAL_CAKE, levelFor, MAX_BUFF } from './cake.ts'
-import { findFood } from './foods.ts'
-import { cannedReaction } from './reactions.ts'
+import { INITIAL_CAKE, MAX_BUFF } from '../game.consts.ts'
+import { feed } from './feed.ts'
+import { findFood } from './findFood.ts'
 
 const food = (id: string) => {
   const f = findFood(id)
@@ -36,20 +36,7 @@ test('buff never drops below 0 or goes over the max', () => {
   assert.equal(result.gained, 5)
 })
 
-test('levels unlock at their thresholds', () => {
-  assert.equal(levelFor(0), 'Soft Sponge')
-  assert.equal(levelFor(44), 'Toned Torte')
-  assert.equal(levelFor(45), 'Swole Sponge')
-  assert.equal(levelFor(100), 'Beef Cake')
-})
-
 test('losing buff is never a level up', () => {
   const result = feed({ buff: 22, meals: 1 }, [food('donut')])
   assert.equal(result.leveledUp, false)
-})
-
-test('canned reactions pick a fitting line', () => {
-  const first = () => 0
-  assert.match(cannedReaction([food('shoe')], 1, first), /shoe/i)
-  assert.match(cannedReaction([food('donut')], -8, first), /regret/)
 })
