@@ -1,23 +1,23 @@
-import { MAX_BUFF } from '../game/cake.ts'
+import { cn } from '../../library/utils/cn.ts'
+import { BIG_SMILE_BUFF, MAX_BUFF, SWEATBAND_BUFF } from '../game.consts.ts'
+import { GAME_LABELS } from '../game.strings.ts'
 
-type Props = {
+type CakeProps = {
   buff: number
   flexing: boolean
 }
 
-/** The cake. Arms and biceps grow with buff; a sweatband shows up near the top. */
-export function Cake({ buff, flexing }: Props) {
-  const t = buff / MAX_BUFF // 0 → 1
-  const bicep = 6 + t * 22
-  const armWidth = 5 + t * 6
-  const showBand = buff >= 70
+export const Cake = ({ buff, flexing }: CakeProps) => {
+  const growth = buff / MAX_BUFF // 0 → 1
+  const bicep = 6 + growth * 22
+  const armWidth = 5 + growth * 6
 
   return (
     <svg
       viewBox="0 0 300 240"
-      className={`w-full max-w-sm ${flexing ? 'animate-flex' : ''}`}
+      className={cn('w-full max-w-sm', flexing && 'animate-flex')}
       role="img"
-      aria-label={`A cake with ${Math.round(buff)} percent buff`}
+      aria-label={GAME_LABELS.cakeImage(buff)}
     >
       {/* plate */}
       <ellipse cx="150" cy="220" rx="110" ry="12" fill="#e7e2ea" />
@@ -60,13 +60,15 @@ export function Cake({ buff, flexing }: Props) {
       <rect x="95" y="88" width="110" height="56" rx="10" fill="var(--color-sponge)" />
       <rect x="95" y="84" width="110" height="16" rx="8" fill="var(--color-frosting)" />
 
-      {showBand && <rect x="93" y="104" width="114" height="8" rx="4" fill="var(--color-berry)" />}
+      {buff >= SWEATBAND_BUFF && (
+        <rect x="93" y="104" width="114" height="8" rx="4" fill="var(--color-berry)" />
+      )}
 
       {/* face */}
       <circle cx="132" cy="122" r="4" fill="var(--color-cocoa)" />
       <circle cx="168" cy="122" r="4" fill="var(--color-cocoa)" />
       <path
-        d={buff >= 45 ? 'M136 132 q14 10 28 0' : 'M138 134 q12 6 24 0'}
+        d={buff >= BIG_SMILE_BUFF ? 'M136 132 q14 10 28 0' : 'M138 134 q12 6 24 0'}
         fill="none"
         stroke="var(--color-cocoa)"
         strokeWidth="3"

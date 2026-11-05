@@ -9,7 +9,7 @@ const ALLOWED_LEVELS: readonly string[] = prompt.levels
 
 type Body = { foods: string[]; gained: number; level: string }
 
-function parse(input: unknown): Body | null {
+const parse = (input: unknown): Body | null => {
   if (!input || typeof input !== 'object') return null
   const { foods, gained, level } = input as Record<string, unknown>
   if (!Array.isArray(foods) || foods.length < 1 || foods.length > 3) return null
@@ -20,14 +20,13 @@ function parse(input: unknown): Body | null {
   return { foods: foods as string[], gained: Math.round(gained), level }
 }
 
-function userMessage({ foods, gained, level }: Body): string {
-  return prompt.userTemplate
+const userMessage = ({ foods, gained, level }: Body): string =>
+  prompt.userTemplate
     .replace('{foods}', foods.join(', '))
     .replace('{gained}', String(gained))
     .replace('{level}', level)
-}
 
-export async function POST(request: Request): Promise<Response> {
+export const POST = async (request: Request): Promise<Response> => {
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) return Response.json({ error: 'not configured' }, { status: 503 })
 
