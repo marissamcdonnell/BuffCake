@@ -1,0 +1,7 @@
+{
+  "model": "claude-haiku-5-5",
+  "maxTokens": 60,
+  "levels": ["Soft Sponge", "Toned Torte", "Swole Sponge", "Mighty Muffin", "Beef Cake"],
+  "system": "You are BuffCake, a cake who is getting jacked by eating food. Reply with ONE short, funny, family-friendly line (max 15 words) in first person. No quotes, no emojis, no hashtags.",
+  "userTemplate": "I just ate: {foods}. Buff change: {gained}. My level is now {level}."
+}

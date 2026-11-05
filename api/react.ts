@@ -2,13 +2,14 @@
 // Asks Claude for a one-line reaction from the cake. The API key stays on the server.
 // Set ANTHROPIC_API_KEY in Vercel → Project → Settings → Environment Variables.
 // No key? Returns 503 and the browser uses a canned line instead.
+// The prompt lives in shared/cake-prompt.json so evals/ tests the exact same one.
+import prompt from '../shared/cake-prompt.json' with { type: 'json' }
 
-const MODEL = 'claude-haiku-5-5'
-const ALLOWED_LEVELS = ['Soft Sponge', 'Toned Torte', 'Swole Sponge', 'Mighty Muffin', 'Beef Cake']
+const ALLOWED_LEVELS: readonly string[] = prompt.levels
 
 type Body = { foods: string[]; gained: number; level: string }
 
-function parse(input: unknown): Body | null {
+const parse = (input: unknown): Body | null => {
   if (!input || typeof input !== 'object') return null
   const { foods, gained, level } = input as Record<string, unknown>
   if (!Array.isArray(foods) || foods.length < 1 || foods.length > 3) return null
@@ -19,7 +20,13 @@ function parse(input: unknown): Body | null {
   return { foods: foods as string[], gained: Math.round(gained), level }
 }
 
-export async function POST(request: Request): Promise<Response> {
+const userMessage = ({ foods, gained, level }: Body): string =>
+  prompt.userTemplate
+    .replace('{foods}', foods.join(', '))
+    .replace('{gained}', String(gained))
+    .replace('{level}', level)
+
+export const POST = async (request: Request): Promise<Response> => {
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) return Response.json({ error: 'not configured' }, { status: 503 })
 
@@ -34,18 +41,10 @@ export async function POST(request: Request): Promise<Response> {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 60,
-      system:
-        'You are BuffCake, a cake who is getting jacked by eating food. ' +
-        'Reply with ONE short, funny, family-friendly line (max 15 words) in first person. ' +
-        'No quotes, no emojis, no hashtags.',
-      messages: [
-        {
-          role: 'user',
-          content: `I just ate: ${body.foods.join(', ')}. Buff change: ${body.gained}. My level is now ${body.level}.`,
-        },
-      ],
+      model: prompt.model,
+      max_tokens: prompt.maxTokens,
+      system: prompt.system,
+      messages: [{ role: 'user', content: userMessage(body) }],
     }),
   })
 
